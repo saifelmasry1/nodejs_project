@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        registry = "elmaasry/nodejs_project"  // استخدم اسم الريبو الصحيح على Docker Hub
+        registry = "elmaasry/nodejs_project"
         registryCredential = 'my-docker-hub'
     }
 
@@ -10,8 +10,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // بناء صورة Docker باستخدام القيم المحددة
-                    env.dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
+                    // خزّن الصورة في متغير عادي بدل env
+                    dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
                 }
             }
         }
@@ -19,9 +19,8 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
                 script {
-                    // دفع الصورة إلى Docker Hub باستخدام بيانات الاعتماد المحددة
                     docker.withRegistry('', registryCredential) {
-                        env.dockerImage.push()
+                        dockerImage.push()
                     }
                 }
             }
@@ -30,7 +29,6 @@ pipeline {
         stage('Clean Up Local Image') {
             steps {
                 script {
-                    // تنظيف الصورة المحلية بعد الدفع
                     sh "docker rmi ${registry}:${BUILD_NUMBER} || true"
                 }
             }
