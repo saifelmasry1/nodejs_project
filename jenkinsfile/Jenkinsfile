@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        registry = "elmaasry/node_js_project"  // استخدم اسم الريبو الصحيح على Docker Hub
+        registry = "elmaasry/nodejs_project"  // استخدم اسم الريبو الصحيح على Docker Hub
         registryCredential = 'my-docker-hub'
     }
 
