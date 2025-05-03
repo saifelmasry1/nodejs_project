@@ -7,15 +7,10 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repository') {
-            steps {
-                git credentialsId: 'github_UP', url: 'git@github.com:saifelmasry1/nodejs_project.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
+                    // بناء صورة Docker باستخدام القيم المحددة
                     env.dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
                 }
             }
@@ -24,6 +19,7 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
                 script {
+                    // دفع الصورة إلى Docker Hub باستخدام بيانات الاعتماد المحددة
                     docker.withRegistry('', registryCredential) {
                         env.dockerImage.push()
                     }
@@ -34,6 +30,7 @@ pipeline {
         stage('Clean Up Local Image') {
             steps {
                 script {
+                    // تنظيف الصورة المحلية بعد الدفع
                     sh "docker rmi ${registry}:${BUILD_NUMBER} || true"
                 }
             }
