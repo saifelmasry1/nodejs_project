@@ -1,37 +1,42 @@
 pipeline {
-  environment {
-    registry = "karimomar71/node-app"
-    registryCredential = 'dockerhub'
-    dockerImage = ''
-  }
-  agent any
+    agent any
 
-        stages {
-            stage('Cloning Git') {
-                steps {
-                    git 'https://github.com/karimomar71/nodejs__app'
-                }
+    environment {
+        registry = "saifelmasry1/node-project"
+        registryCredential = 'my-docker-hub'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git credentialsId: 'github_UP', url: 'git@github.com:saifelmasry1/nodejs_project.git'
             }
-            stage('Building image') {
-                steps{
-                    script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
-                    }
-            }
-            }
-            stage('Deploy Image') {
-                steps{
-                    script {
-                        docker.withRegistry( '', registryCredential ) {
-                        dockerImage.push()
-                    }
-                    }
-            }
-            }
-            stage('Remove Unused docker image') {
-                steps{
-                    sh "docker rmi $registry:$BUILD_NUMBER"
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    env.dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
                 }
             }
         }
+
+        stage('Push to DockerHub') {
+            steps {
+                script {
+                    docker.withRegistry('', registryCredential) {
+                        env.dockerImage.push()
+                    }
+                }
+            }
         }
+
+        stage('Clean Up Local Image') {
+            steps {
+                script {
+                    sh "docker rmi ${registry}:${BUILD_NUMBER} || true"
+                }
+            }
+        }
+    }
+}
