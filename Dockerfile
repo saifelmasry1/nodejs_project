@@ -1,5 +1,10 @@
-FROM node:12
-COPY nodeapp /nodeapp
-WORKDIR /nodeapp
+FROM node:18
+
+WORKDIR /app
+
+COPY package*.json ./
 RUN npm install
-CMD ["node", "/nodeapp/app.js"]
+
+COPY . .
+
+CMD ["node", "app.js"]
