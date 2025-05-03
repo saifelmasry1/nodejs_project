@@ -1,10 +1,12 @@
 const express = require('express')
 const app = express()
-const port = 3000
+
+const port = process.env.PORT || 3000  // استخدام متغير بيئي للبورت أو 3000 كافتراضي
+
 app.get('/', (req, res) => {
-    res.send('Hello World from ITI 3 month')
-  })
-  
-  app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`)
-  })
+  res.send('Hello, this is my new project')  // الرسالة الجديدة
+})
+
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`)
+})
