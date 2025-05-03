@@ -2,9 +2,10 @@ FROM node:18
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY nodeapp/package*.json ./
 RUN npm install
 
 COPY nodeapp/ ./
 
-CMD ["node", "app.js"]
+EXPOSE 3000
+CMD [ "npm", "start" ]
